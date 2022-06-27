@@ -8,16 +8,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Filmoteka.Data;
 using Filmoteka.Models;
+using Filmoteka.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Filmoteka.Controllers
 {
     public class MoviesController : Controller
     {
         private readonly FilmotekaDbContext _context;
-
-        public MoviesController(FilmotekaDbContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public MoviesController(FilmotekaDbContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = hostEnvironment;
         }
 
         // GET: Movies
@@ -55,15 +58,49 @@ namespace Filmoteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MovieId,Title,ReleaseDate")] Movie movie)
+        public async Task<IActionResult> Create(MoviePostViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(movie);
+                string uniqueImageName = UploadedFile(model);
+                Image newImage = new Image()
+                {
+                    Name = uniqueImageName,
+                    IsApplied = true,
+                };
+                
+                _context.Images.Add(newImage);
+
+                Movie newMovie = new Movie()
+                {
+                    Title = model.Title,
+                    ReleaseDate = model.ReleaseDate,
+                    Genres = model.Genres,
+                    Actors = model.Actors,
+                };
+
+                newMovie.Image = newImage;
+                _context.Movies.Add(newMovie);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            return View(movie);
+            return View();
+        }
+
+        private string UploadedFile(MoviePostViewModel model)
+        {
+            string uniqueImageName = null;
+
+            if(model.MovieImage != null)
+            {
+                string uploadsLocation = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                uniqueImageName = Guid.NewGuid().ToString() + "_" + model.MovieImage.FileName;
+                string filePath = Path.Combine(uploadsLocation, uniqueImageName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.MovieImage.CopyTo(fileStream);
+                }
+            }
+            return uniqueImageName;
         }
 
         // GET: Movies/Edit/5
@@ -74,12 +111,16 @@ namespace Filmoteka.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies.FindAsync(id);
+            Movie movie = await _context.Movies.FindAsync(id);
             if (movie == null)
             {
                 return NotFound();
             }
-            return View(movie);
+            MovieEditViewModel movieEditViewModel = new MovieEditViewModel(movie);
+            var currentImage = await _context.Images.FindAsync(movie.Image);
+            movieEditViewModel.ImageName = currentImage!=null?currentImage.Name: "No_image_available.svg";
+            movieEditViewModel.Actors = movie.Actors;
+            return View(movieEditViewModel);
         }
 
         // POST: Movies/Edit/5
@@ -87,7 +128,7 @@ namespace Filmoteka.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MovieId,Title,ReleaseDate")] Movie movie)
+        public async Task<IActionResult> Edit(int id, Movie movie)
         {
             if (id != movie.MovieId)
             {

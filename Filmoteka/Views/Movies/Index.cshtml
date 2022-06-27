@@ -1,41 +1,76 @@
 ﻿@model IEnumerable<Filmoteka.Models.Movie>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Filmy";
 }
 
-<h1>Index</h1>
+<h1>Filmy</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <button type="button" class=" btn btn-primary" asp-action="Create">Utwórz nowy</button>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MovieId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MovieId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MovieId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReleaseDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <th>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </th>
+                @*<div id=@(item.Title+"carouselslides") class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        @foreach(var image in item.Images)
+                            {
+                                if(item.Images.First()==image)
+                                {
+                                    <div class="carousel-item active">
+                                        <img class="d-block w-100" src="data:image;base64,@System.Convert.ToBase64String(image.Bytes)" width="80" height="80">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="carousel-item">
+                                        <img class="d-block w-100" src="data:image;base64,@System.Convert.ToBase64String(image.Bytes)" width="80" height="80">
+                                    </div>
+                                }
+                            }
+                        </div>
+                </div>*@
+                <th id =@item.Title>
+                        @if(item.Image != null)
+                        {
+                            <img class="d-block w-100" src="~/images/@item.Image.Name"> 
+                        }
+                    
+                </th>
+                <th>
+                    @Html.DisplayFor(modelItem => item.ReleaseDate)
+                </th>
+                <th>
+                    <a asp-action="Edit" asp-route-id="@item.MovieId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.MovieId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.MovieId">Delete</a>
+                </th>
+            </tr>
+            }
+        </tbody>
 </table>
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(".custom-image-input").on("change", function()){
+            var imageFileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(imageFileName);
+        });   
+    </script>
+}

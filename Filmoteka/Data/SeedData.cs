@@ -9,43 +9,29 @@ namespace Filmoteka.Data
         {
             using (var context = new FilmotekaDbContext(serviceProvider.GetRequiredService<DbContextOptions<FilmotekaDbContext>>()))
             {
-                if (!context.Categories.Any())
+                if (context.Genres.Count() <1)
                 {
-                    context.Categories.AddRange(
-                        new Category
+                    context.Genres.AddRange(
+                        new Genre
                         {
                             
                             Name = "Komedia"
                         },
-                        new Category
+                        new Genre
                         {
                            
                             Name = "Horror"
                         },
-                        new Category
+                        new Genre
                         {
                             
                             Name = "Dokumentalny"
                         },
-                        new Category
+                        new Genre
                         {
                            
                             Name = "Sci-fi"
                         }); ;
-                }
-                if(!context.Actors.Any())
-                {
-                    context.Actors.AddRange(
-                        new Actor
-                        {
-                            Name = "Tomasz",
-                            Surname = "Adamczyk"
-                        },
-                        new Actor
-                        {
-                            Name = "Sigourney",
-                            Surname = "Weaver"
-                        });
                 }
                 context.SaveChanges();
                 if(!context.Movies.Any())

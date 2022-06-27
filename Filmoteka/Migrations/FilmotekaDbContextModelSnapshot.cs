@@ -37,21 +37,6 @@ namespace Filmoteka.Migrations
                     b.ToTable("ActorMovie");
                 });
 
-            modelBuilder.Entity("CategoryMovie", b =>
-                {
-                    b.Property<int>("CategoriesCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MoviesMovieId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesCategoryId", "MoviesMovieId");
-
-                    b.HasIndex("MoviesMovieId");
-
-                    b.ToTable("CategoryMovie");
-                });
-
             modelBuilder.Entity("Filmoteka.Models.Actor", b =>
                 {
                     b.Property<int>("ActorId")
@@ -73,21 +58,41 @@ namespace Filmoteka.Migrations
                     b.ToTable("Actors");
                 });
 
-            modelBuilder.Entity("Filmoteka.Models.Category", b =>
+            modelBuilder.Entity("Filmoteka.Models.Genre", b =>
                 {
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("GenreId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GenreId"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CategoryId");
+                    b.HasKey("GenreId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("Filmoteka.Models.Image", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"), 1L, 1);
+
+                    b.Property<bool>("IsApplied")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Filmoteka.Models.Movie", b =>
@@ -98,6 +103,9 @@ namespace Filmoteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MovieId"), 1L, 1);
 
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
@@ -107,7 +115,24 @@ namespace Filmoteka.Migrations
 
                     b.HasKey("MovieId");
 
+                    b.HasIndex("ImageId");
+
                     b.ToTable("Movies");
+                });
+
+            modelBuilder.Entity("GenreMovie", b =>
+                {
+                    b.Property<int>("GenresGenreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesMovieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GenresGenreId", "MoviesMovieId");
+
+                    b.HasIndex("MoviesMovieId");
+
+                    b.ToTable("GenreMovie");
                 });
 
             modelBuilder.Entity("ActorMovie", b =>
@@ -125,11 +150,20 @@ namespace Filmoteka.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CategoryMovie", b =>
+            modelBuilder.Entity("Filmoteka.Models.Movie", b =>
                 {
-                    b.HasOne("Filmoteka.Models.Category", null)
+                    b.HasOne("Filmoteka.Models.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("CategoriesCategoryId")
+                        .HasForeignKey("ImageId");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("GenreMovie", b =>
+                {
+                    b.HasOne("Filmoteka.Models.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenresGenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

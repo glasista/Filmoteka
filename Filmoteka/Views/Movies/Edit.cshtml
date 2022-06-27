@@ -1,4 +1,4 @@
-﻿@model Filmoteka.Models.Movie
+﻿@model Filmoteka.ViewModels.MovieEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -9,8 +9,8 @@
 <h4>Movie</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="col-md-4" algin="center">
+        <form asp-action="Edit" enctype="multipart/form-data" asp-controller="Movies" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="MovieId" />
             <div class="form-group">
@@ -24,6 +24,16 @@
                 <span asp-validation-for="ReleaseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <td id =model.Title>
+                <img class="d-block w-100" src="~/images/@Model.ImageName">
+                </td>
+                <label asp-for="MovieImage" class="control-label"></label>
+                <input asp-for="MovieImage" class="custom-image-input" id="customImage"/>
+                <label class="custom-image-label" for="customImage">Wybierz obraz dla filmu</label>
+                <span asp-validation-for="MovieImage" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -36,4 +46,11 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(".custom-image-input").on("change", function()){
+            var imageFileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(imageFileName);
+        });   
+    </script>
 }
+

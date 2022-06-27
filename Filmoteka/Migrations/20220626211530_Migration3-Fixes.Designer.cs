@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Filmoteka.Migrations
 {
     [DbContext(typeof(FilmotekaDbContext))]
-    [Migration("20220407054421_Initial")]
-    partial class Initial
+    [Migration("20220626211530_Migration3-Fixes")]
+    partial class Migration3Fixes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,21 +37,6 @@ namespace Filmoteka.Migrations
                     b.HasIndex("MoviesMovieId");
 
                     b.ToTable("ActorMovie");
-                });
-
-            modelBuilder.Entity("GenreMovie", b =>
-                {
-                    b.Property<int>("GenresGenreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MoviesMovieId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GenresGenreId", "MoviesMovieId");
-
-                    b.HasIndex("MoviesMovieId");
-
-                    b.ToTable("GenreMovie");
                 });
 
             modelBuilder.Entity("Filmoteka.Models.Actor", b =>
@@ -92,6 +77,26 @@ namespace Filmoteka.Migrations
                     b.ToTable("Genres");
                 });
 
+            modelBuilder.Entity("Filmoteka.Models.Image", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"), 1L, 1);
+
+                    b.Property<bool>("IsApplied")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("Filmoteka.Models.Movie", b =>
                 {
                     b.Property<int>("MovieId")
@@ -99,6 +104,9 @@ namespace Filmoteka.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MovieId"), 1L, 1);
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
@@ -109,7 +117,24 @@ namespace Filmoteka.Migrations
 
                     b.HasKey("MovieId");
 
+                    b.HasIndex("ImageId");
+
                     b.ToTable("Movies");
+                });
+
+            modelBuilder.Entity("GenreMovie", b =>
+                {
+                    b.Property<int>("GenresGenreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesMovieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GenresGenreId", "MoviesMovieId");
+
+                    b.HasIndex("MoviesMovieId");
+
+                    b.ToTable("GenreMovie");
                 });
 
             modelBuilder.Entity("ActorMovie", b =>
@@ -125,6 +150,15 @@ namespace Filmoteka.Migrations
                         .HasForeignKey("MoviesMovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Filmoteka.Models.Movie", b =>
+                {
+                    b.HasOne("Filmoteka.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId");
+
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("GenreMovie", b =>

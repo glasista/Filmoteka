@@ -1,4 +1,4 @@
-﻿@model Filmoteka.Models.Movie
+﻿@model Filmoteka.ViewModels.MoviePostViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form  method="post" enctype="multipart/form-data" asp-controller="Movies" asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
@@ -23,7 +23,15 @@
                 <span asp-validation-for="ReleaseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="MovieImage" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="MovieImage" class="custom-file-input" id="customFile"/>
+                    <label class="custom-file-label" for="customFile">Wybierz obraz dla filmu</label>
+                </div>
+                <span asp-validation-for="MovieImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary rounded-0 text-uppercase" />
             </div>
         </form>
     </div>
@@ -35,4 +43,10 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(".custom-file-input").on("change", function() {
+            var FileName = $(this).val().split(\\).pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
 }

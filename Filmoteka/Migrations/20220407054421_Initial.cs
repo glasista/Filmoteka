@@ -24,16 +24,16 @@ namespace Filmoteka.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Genres",
                 columns: table => new
                 {
-                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                    GenreId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
+                    table.PrimaryKey("PK_Genres", x => x.GenreId);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,23 +75,23 @@ namespace Filmoteka.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CategoryMovie",
+                name: "GenreMovie",
                 columns: table => new
                 {
-                    CategoriesCategoryId = table.Column<int>(type: "int", nullable: false),
+                    GenresGenreId = table.Column<int>(type: "int", nullable: false),
                     MoviesMovieId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CategoryMovie", x => new { x.CategoriesCategoryId, x.MoviesMovieId });
+                    table.PrimaryKey("PK_GenreMovie", x => new { x.GenresGenreId, x.MoviesMovieId });
                     table.ForeignKey(
-                        name: "FK_CategoryMovie_Categories_CategoriesCategoryId",
-                        column: x => x.CategoriesCategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "CategoryId",
+                        name: "FK_GenreMovie_Genres_GenresGenreId",
+                        column: x => x.GenresGenreId,
+                        principalTable: "Genres",
+                        principalColumn: "GenreId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CategoryMovie_Movies_MoviesMovieId",
+                        name: "FK_GenreMovie_Movies_MoviesMovieId",
                         column: x => x.MoviesMovieId,
                         principalTable: "Movies",
                         principalColumn: "MovieId",
@@ -104,8 +104,8 @@ namespace Filmoteka.Migrations
                 column: "MoviesMovieId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategoryMovie_MoviesMovieId",
-                table: "CategoryMovie",
+                name: "IX_GenreMovie_MoviesMovieId",
+                table: "GenreMovie",
                 column: "MoviesMovieId");
         }
 
@@ -115,13 +115,13 @@ namespace Filmoteka.Migrations
                 name: "ActorMovie");
 
             migrationBuilder.DropTable(
-                name: "CategoryMovie");
+                name: "GenreMovie");
 
             migrationBuilder.DropTable(
                 name: "Actors");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Genres");
 
             migrationBuilder.DropTable(
                 name: "Movies");

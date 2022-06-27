@@ -11,22 +11,22 @@ using Filmoteka.Models;
 
 namespace Filmoteka.Controllers
 {
-    public class CategoriesController : Controller
+    public class GenresController : Controller
     {
         private readonly FilmotekaDbContext _context;
 
-        public CategoriesController(FilmotekaDbContext context)
+        public GenresController(FilmotekaDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Genres
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await _context.Genres.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Genres/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,39 +34,39 @@ namespace Filmoteka.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
+            var Genre = await _context.Genres
+                .FirstOrDefaultAsync(m => m.GenreId == id);
+            if (Genre == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(Genre);
         }
 
-        // GET: Categories/Create
+        // GET: Genres/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Genres/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,Name")] Category category)
+        public async Task<IActionResult> Create([Bind("GenreId,Name")] Genre Genre)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                _context.Add(Genre);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(Genre);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Genres/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +74,22 @@ namespace Filmoteka.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var Genre = await _context.Genres.FindAsync(id);
+            if (Genre == null)
             {
                 return NotFound();
             }
-            return View(category);
+            return View(Genre);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Genres/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,Name")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("GenreId,Name")] Genre Genre)
         {
-            if (id != category.CategoryId)
+            if (id != Genre.GenreId)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace Filmoteka.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(Genre);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.CategoryId))
+                    if (!GenreExists(Genre.GenreId))
                     {
                         return NotFound();
                     }
@@ -114,10 +114,10 @@ namespace Filmoteka.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(Genre);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Genres/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,30 +125,30 @@ namespace Filmoteka.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
+            var Genre = await _context.Genres
+                .FirstOrDefaultAsync(m => m.GenreId == id);
+            if (Genre == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(Genre);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Genres/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
+            var Genre = await _context.Genres.FindAsync(id);
+            _context.Genres.Remove(Genre);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool GenreExists(int id)
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            return _context.Genres.Any(e => e.GenreId == id);
         }
     }
 }
